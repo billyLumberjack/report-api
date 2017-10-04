@@ -132,7 +132,9 @@ module.exports.list = (event, context, callback) => {
   }
   else{
     var params = {
-      TableName: process.env.MY_TABLE
+      TableName: process.env.MY_TABLE,
+      IndexName: "MyDate",
+      ScanIndexForward: false
     };       
   }
   
@@ -156,6 +158,10 @@ function dbScanFromParams(p, c){
 
     var response = {
       statusCode: 200,
+      headers: {
+        "Access-Control-Allow-Origin" : "*", // Required for CORS support to work
+        "Access-Control-Allow-Credentials" : true // Required for cookies, authorization headers with HTTPS
+      },
       body: JSON.stringify(result.Items),
     };
     c(null, response);

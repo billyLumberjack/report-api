@@ -23,7 +23,7 @@ provider:
   stage: dev
   region: eu-central-1
   environment:
-    MY_TABLE: my-report-table
+    MY_TABLE: report-table
     #CANDIDATE_EMAIL_TABLE: "candidate-email-${opt:stage, self:provider.stage}"
   iamRoleStatements:
     - Effect: Allow
@@ -164,17 +164,29 @@ resources:
           -
             AttributeName: "Id"
             AttributeType: "S"
-#          -
-#            AttributeName: "Date"
-#            AttributeType: "N"               
+          -
+            AttributeName: "Type"
+            AttributeType: "S"            
+          -
+            AttributeName: "Date"
+            AttributeType: "N"            
         KeySchema:
           -
             AttributeName: "Id"
-            KeyType: "HASH"
-#          -
-#            AttributeName: "Date"
-#            KeyType: "RANGE"            
+            KeyType: "HASH"                                
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
+#        GlobalSecondaryIndexes:
+#          - IndexName: MyDate
+#            KeySchema:
+#              - AttributeName: "Type"
+#                KeyType: HASH
+#              - AttributeName: "Date"
+#                KeyType: RANGE                
+#            Projection:
+#              ProjectionType: ALL
+#            ProvisionedThroughput:
+#              ReadCapacityUnits: 1
+#              WriteCapacityUnits: 1
         TableName: ${self:provider.environment.MY_TABLE}
