@@ -91,6 +91,14 @@ functions:
           method: get
           cors: true
 
+  getLastReports:
+    handler: CRUD/get.getLastReports
+    events:
+      - http:
+          path: report/getLastReports
+          method: get
+          cors: true          
+
   update:
     handler: CRUD/update.update
     events:
@@ -106,6 +114,14 @@ functions:
           path: report/{id}
           method: delete
           cors: true
+
+  getImages:
+    handler: images.getImagesFromQuery
+    events:
+      - http:
+          path: images
+          method: get
+          cors: true          
 
 
 
@@ -158,7 +174,6 @@ resources:
   Resources:
     MyDynamoDbTable:
       Type: 'AWS::DynamoDB::Table'
-      DeletionPolicy: Retain
       Properties:
         AttributeDefinitions:
           -
@@ -171,22 +186,28 @@ resources:
             AttributeName: "Date"
             AttributeType: "N"            
         KeySchema:
+#          -
+#            AttributeName: "Type"
+#            KeyType: "HASH"             
           -
             AttributeName: "Id"
-            KeyType: "HASH"                                
+            KeyType: "HASH"     
+#          -
+#            AttributeName: "Date"
+#            KeyType: "RANGE"                                            
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
-#        GlobalSecondaryIndexes:
-#          - IndexName: MyDate
-#            KeySchema:
-#              - AttributeName: "Type"
-#                KeyType: HASH
-#              - AttributeName: "Date"
-#                KeyType: RANGE                
-#            Projection:
-#              ProjectionType: ALL
-#            ProvisionedThroughput:
-#              ReadCapacityUnits: 1
-#              WriteCapacityUnits: 1
+        GlobalSecondaryIndexes:
+          - IndexName: MyGsi
+            KeySchema:
+              - AttributeName: "Type"
+                KeyType: HASH
+              - AttributeName: "Date"
+                KeyType: RANGE                
+            Projection:
+              ProjectionType: ALL
+            ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
         TableName: ${self:provider.environment.MY_TABLE}

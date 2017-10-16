@@ -1,0 +1,9 @@
+Date from to
+Grade
+Region
+StartingAltitude
+ElevationGain
+DownhillSide
+UphillSide
+TripName
+

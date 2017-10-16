@@ -5,9 +5,13 @@ var AWS = require('aws-sdk'); // eslint-disable-line import/no-extraneous-depend
 var dynamoDb = new AWS.DynamoDB.DocumentClient();
 
 module.exports.list = (event, context, callback) => {
+
+  console.log("HEY YOU");
  
   // Are there parameters ?
   if(event.queryStringParameters != null){
+
+    console.log("PARAMS FOUND ! ");
 
     var params = {
       TableName: process.env.MY_TABLE,
@@ -15,6 +19,11 @@ module.exports.list = (event, context, callback) => {
       ExpressionAttributeNames: {},
       ExpressionAttributeValues: {}
     };       
+
+    //Size limit
+    if(event.queryStringParameters.limit != null){
+      params["Limit"] = parseInt(event.queryStringParameters.limit);
+    }    
 
     //Date interval
     if(event.queryStringParameters.fromDate != null && event.queryStringParameters.toDate != null){
@@ -131,9 +140,10 @@ module.exports.list = (event, context, callback) => {
 
   }
   else{
+    console.log("NO PARAMS");
     var params = {
       TableName: process.env.MY_TABLE,
-      IndexName: "MyDate",
+      Limit:3,
       ScanIndexForward: false
     };       
   }
