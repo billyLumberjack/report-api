@@ -25,6 +25,8 @@ provider:
   region: eu-central-1
   environment:
     MY_TABLE: report-table
+    REGION: eu-central-1
+    INSTANCE_ID: i-0f0db9ea60429396a
     #CANDIDATE_EMAIL_TABLE: "candidate-email-${opt:stage, self:provider.stage}"
   iamRoleStatements:
     - Effect: Allow
@@ -33,6 +35,8 @@ provider:
         - dynamodb:Scan
         - dynamodb:GetItem
         - dynamodb:PutItem
+        - "ec2:Start*"
+        - "ec2:Stop*"
       Resource: "*"   
 
 custom:
@@ -61,6 +65,22 @@ custom:
           description: That other tag that we all love
 
 functions:
+
+  start_ec2:
+      handler: ec2_scheduler.start
+      events:
+      #sfasati di un'ora in quanto in italia siamo a GMT + 1
+        - schedule: cron(0 12 * * ? *)
+        - schedule: cron(0 17 * * ? *)
+        - schedule: cron(0 22 * * ? *)
+
+  stop_ec2:
+      handler: ec2_scheduler.stop
+      events:
+        - schedule: cron(5 12 * * ? *)
+        - schedule: cron(5 17 * * ? *)
+        - schedule: cron(5 22 * * ? *)
+
   create:
     handler: CRUD/create.create
     events:
