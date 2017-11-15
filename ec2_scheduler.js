@@ -1,4 +1,5 @@
 'use strict';
+/* variable declarations */
 var AWS = require('aws-sdk');
 var aws_config = {region: process.env.REGION};
 
@@ -14,6 +15,8 @@ var callback = function (err, data) {
     
     context.done(err,data);
 };
+/* END variable declarations*/
+/* exporting lambda functions*/
 
 module.exports.start = (event, context) => {
 
@@ -26,3 +29,5 @@ module.exports.stop = (event, context) => {
     var ec2 = new AWS.EC2(aws_config);
     ec2.stopInstances(instances,callback);
 };
+
+/* END lambda functions */
