@@ -5,7 +5,9 @@
   "main": "test.js",
   "dependencies": {
     "aws-sdk": "^2.148.0",
-    "querystring": "^0.2.0",
+    "file-type": "^7.3.0",
+    "moment": "^2.19.2",
+    "mongodb": "^2.2.33",
     "serverless-aws-documentation": "^1.0.0"
   },
   "devDependencies": {
