@@ -14,7 +14,6 @@ module.exports.get = (event, context, callback) => {
     var params = {
         filter: {
         },
-        project: {},
         sort: {
             Date:-1,
             CreatedAt: -1
@@ -45,6 +44,7 @@ module.exports.get = (event, context, callback) => {
         params = ParamsHelper.ceaTripRate(event.queryStringParameters, params);
         params = ParamsHelper.ceaSnowRate(event.queryStringParameters, params);
         params = ParamsHelper.ceaStartingFrom(event.queryStringParameters, params);
+        params = ParamsHelper.ceaDayOfYear(event.queryStringParameters, params);
 
         console.log("Querying with params", params);
 
@@ -61,7 +61,23 @@ function dbQueryFromParams(p, c) {
 
     MongoClient.connect(url, function (err, db) {
         if (err) throw err;
-        db.collection(collection_name).find(p.filter, p.project).sort(p.sort).skip(p.skip).limit(p.limit).toArray(
+
+        var pipeline = [
+            {$match : p.filter},
+            {$sort : p.sort},
+            {$skip : p.skip},
+            {$limit : p.limit}
+        ];
+
+        if( p.filter.DayOfYear ){
+            pipeline.unshift({ $addFields : { DayOfYear: { $dayOfYear: {$toDate : "$Date"} } } });
+        }
+
+        var res = db.collection(collection_name).aggregate(pipeline);
+
+        //var res = db.collection(collection_name).find(p.filter, p.project).sort(p.sort).skip(p.skip).limit(p.limit);
+        
+        res.toArray(
             function (err, result) {
                 if (err) throw err;
                 console.log("success, size", result.length);
